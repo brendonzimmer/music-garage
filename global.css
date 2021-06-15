@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  @apply bg-gradient-to-br from-[#10b981] to-[#2563eb] via-[#7c3aed] bg-fixed;
+}
