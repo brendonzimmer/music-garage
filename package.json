@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^1.0.1",
+    "aged-cheddar": "^2.1.1",
     "axios": "^0.21.1",
     "next": "10.2.3",
     "react": "17.0.2",

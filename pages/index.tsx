@@ -25,9 +25,9 @@ const Home: React.FC = () => {
         <div className="text-[3.5rem] leading-none font-bold text-white opacity-90 col-start-3 row-start-5 -ml-2 -mt-6 w-min">
           entirely curated music
         </div>
-        <div className="col-start-3 row-start-6 mt-14 -ml-2 text-white text-lg leading-[1.2rem] font-semibold opacity-50 italic">
+        <div className="col-start-3 row-start-6 mt-14 -ml-2 text-white text-lg leading-[1.2rem] font-semibold italic">
           <Link href="/playlists">
-            <div className="flex w-min">
+            <div className="flex w-min opacity-50 hover:cursor-pointer hover:opacity-[0.675] active:opacity-80 duration-100">
               discover
               <svg
                 xmlns="http://www.w3.org/2000/svg"

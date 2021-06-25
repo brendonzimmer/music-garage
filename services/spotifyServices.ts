@@ -28,17 +28,17 @@ export function getPlaylist(id: string, token: tokenData["access_token"]) {
     Authorization: "Bearer " + token,
   };
 
-  return axios.get<PlaylistData>(`https://api.spotify.com/v1/playlists/${id}`, {
+  return axios.get<PlaylistData>(`https://api.spotify.com/v1/playlists/${id}?`, {
     headers: headers,
   });
 }
 
-export function getPlaylistTracks(id: string) {
+export function getPlaylistTracks(id: string, token: tokenData["access_token"], offset: number) {
   const headers = {
-    Authorization: "Bearer " + localStorage.getItem("token"),
+    Authorization: "Bearer " + token,
   };
 
-  return axios.get(`https://api.spotify.com/v1/playlists/${id}/tracks`, {
+  return axios.get<PlaylistData["tracks"]>(`https://api.spotify.com/v1/playlists/${id}/tracks?offset=${offset}`, {
     headers: headers,
   });
 }
