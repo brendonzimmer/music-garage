@@ -5,3 +5,13 @@
 html {
   @apply bg-gradient-to-br from-[#10b981] to-[#2563eb] via-[#7c3aed] bg-fixed;
 }
+
+/* Hide Scrollbar */
+body::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+body {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
