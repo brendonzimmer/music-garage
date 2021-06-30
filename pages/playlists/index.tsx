@@ -1,27 +1,16 @@
 import type { GroupedPlaylistData } from "../../services/spotifyServices";
+import PlaylistCover from "../../components/playlistCover";
 import type { InferGetStaticPropsType } from "next";
-import { MusicNoteIcon } from "@heroicons/react/solid";
 import Link from "next/link";
 
-const Playlists: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
-  playlists,
-}: {
+const Playlists: React.FC<{
   playlists: GroupedPlaylistData;
-}) => {
+}> = ({ playlists }) => {
   return (
     <div className="m-3 grid grid-cols-2 gap-2">
       {playlists.items.map(p => (
         <Link key={p.id} href={`/playlists/${p.id}`}>
-          <div className="p-1.5 bg-white bg-opacity-20 rounded-md shadow-sm hover:cursor-pointer hover:bg-opacity-[0.25] active:bg-opacity-[0.35] duration-100">
-            <img src={p.images[0].url} alt={`${p.name} Playlist Cover Image`} className="rounded-lg shadow-sm" />
-            <div className="flex justify-between items-end mx-0.5">
-              <div className="mt-0.5 -mb-0.5 font-medium text-black text-opacity-40">{p.name}</div>
-              <div className="text-xs font-medium text-black text-opacity-40 flex items-center">
-                {p.tracks.total}
-                <MusicNoteIcon className="w-3 h-3 mx-0.5" />
-              </div>
-            </div>
-          </div>
+          <PlaylistCover playlist={p} />
         </Link>
       ))}
     </div>
@@ -31,9 +20,9 @@ const Playlists: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
 export default Playlists;
 
 import { GetStaticProps } from "next";
-import { getToken, getAllPlaylists, tokenData } from "../../services/spotifyServices";
+import { getToken, getAllPlaylists } from "../../services/spotifyServicesBrendon";
 export const getStaticProps: GetStaticProps = async context => {
-  const { data: token } = await getToken<tokenData>();
+  const { data: token } = await getToken();
   const { data: results } = await getAllPlaylists(token.access_token);
 
   if (!results) {
