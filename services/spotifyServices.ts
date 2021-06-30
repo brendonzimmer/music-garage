@@ -1,52 +1,123 @@
+import { setCookie } from "./cookieServices";
 import axios from "axios";
 import btoa from "btoa";
+import { GetServerSidePropsContext } from "next";
 
-const clientId = process.env.CLIENT_ID;
-const clientSecret = process.env.CLIENT_SECRET;
+// for services about Transfering
+const clientId = process.env.SPOTIFY_MOVING_CLIENT_ID;
+const clientSecret = process.env.SPOTIFY_MOVING_CLIENT_SECRET;
+const redirect_uri = "http://localhost:3000/transfer/playlists";
 
-export function getToken<T>() {
+// Only use on server!
+async function getToken(authCode: userTokenData["access_token"]) {
   const headers = {
-    "Content-Type": "application/x-www-form-urlencoded",
     Authorization: "Basic " + btoa(clientId + ":" + clientSecret),
   };
 
-  return axios.post<T>("https://accounts.spotify.com/api/token", "grant_type=client_credentials", { headers: headers });
+  // Send request for token using auth code and extract to const result
+  const { data: result } = await axios.post<userTokenData>("https://accounts.spotify.com/api/token", null, {
+    headers,
+    params: { grant_type: "authorization_code", code: authCode, redirect_uri },
+  });
+
+  return result;
 }
 
-export function getAllPlaylists(token: tokenData["access_token"]) {
+// Only use on server!
+async function refreshToken(refreshToken: userTokenData["refresh_token"]) {
+  const headers = {
+    Authorization: "Basic " + btoa(clientId + ":" + clientSecret),
+  };
+
+  // Send request for token using refresh token and extract to const result
+  const { data: result } = await axios.post<userTokenData>("https://accounts.spotify.com/api/token", null, {
+    headers,
+    params: { grant_type: "refresh_token", refresh_token: refreshToken },
+  });
+
+  return result;
+}
+
+// Only use on server. Can refresh token. Must have Auth code in query or Refresh token in cookie.
+export async function getUserToken(context: GetServerSidePropsContext): Promise<userTokenData["access_token"]> {
+  if (context.req.cookies.refresh) {
+    const newToken = await refreshToken(context.req.cookies.refresh);
+    return newToken.access_token;
+  }
+
+  // if request is callback from spotify
+  if (context.query.code) {
+    const token = await getToken(context.query.code as string);
+
+    setCookie(context.res, token.refresh_token);
+    return token.access_token;
+  }
+
+  return undefined;
+}
+
+// Uses recursion to get all playlists
+export async function getAllPlaylists(token: userTokenData["access_token"], next?: string) {
+  const playlists: GroupedPlaylistData["items"] = [];
+
   const headers = {
     Authorization: "Bearer " + token,
   };
 
-  return axios.get<GroupedPlaylistData>(`https://api.spotify.com/v1/users/brendonzimmer/playlists?&limit=50`, {
-    headers: headers,
-  });
+  const { data: results } = await axios.get<GroupedPlaylistData>(
+    next || `https://api.spotify.com/v1/me/playlists?limit=50`,
+    { headers }
+  );
+
+  playlists.push(...results.items);
+
+  if (results.next) playlists.push(...(await getAllPlaylists(token, results.next as string)));
+
+  return playlists;
 }
 
-export function getPlaylist(id: string, token: tokenData["access_token"]) {
+export async function getPlaylist(id: string, token: userTokenData["access_token"]) {
   const headers = {
     Authorization: "Bearer " + token,
   };
 
-  return axios.get<PlaylistData>(`https://api.spotify.com/v1/playlists/${id}?`, {
-    headers: headers,
-  });
+  const { data: res } = await axios.get<PlaylistData>(`https://api.spotify.com/v1/playlists/${id}`, { headers });
+
+  return res;
 }
 
-export function getPlaylistTracks(id: string, token: tokenData["access_token"], offset: number) {
+// Uses recursion to get all songs
+export async function getPlaylistTracks(id: string, token: tokenData["access_token"], next?: string) {
+  const tracks: TrackData[] = [];
+
   const headers = {
     Authorization: "Bearer " + token,
   };
 
-  return axios.get<PlaylistData["tracks"]>(`https://api.spotify.com/v1/playlists/${id}/tracks?offset=${offset}`, {
-    headers: headers,
-  });
+  const { data: results } = await axios.get<PlaylistData["tracks"]>(
+    `https://api.spotify.com/v1/playlists/${id}/tracks?limit=100`,
+    { headers }
+  );
+
+  tracks.push(...results.items);
+
+  if (results.next) tracks.push(...(await getPlaylistTracks(id, token, results.next as string)));
+
+  return tracks;
 }
 
 export interface tokenData {
   access_token: string;
   token_type: string;
   expires_in: number;
+}
+
+export interface userTokenData {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  refresh_token: string;
+  scope: string;
 }
 
 export interface GroupedPlaylistData {
