@@ -70,7 +70,7 @@ const PlaylistDetail: React.FC<{
         <div>
           <div className="grid grid-cols-1 gap-2">
             {tracks.map(t => (
-              <Track track={t} />
+              <Track key={t.track.id} track={t} />
             ))}
           </div>
         </div>

@@ -1,6 +1,5 @@
 import type { GroupedPlaylistData } from "../../services/spotifyServices";
 import PlaylistCover from "../../components/playlistCover";
-import type { InferGetStaticPropsType } from "next";
 import Link from "next/link";
 
 const Playlists: React.FC<{
@@ -10,7 +9,9 @@ const Playlists: React.FC<{
     <div className="m-3 grid grid-cols-2 gap-2">
       {playlists.items.map(p => (
         <Link key={p.id} href={`/playlists/${p.id}`}>
-          <PlaylistCover playlist={p} />
+          <div>
+            <PlaylistCover playlist={p} />
+          </div>
         </Link>
       ))}
     </div>
