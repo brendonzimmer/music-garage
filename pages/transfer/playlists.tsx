@@ -57,7 +57,7 @@ const TransferPlaylists: React.FC<{
           </div>
         </div>
       ) : tracksInfo ? (
-        <PlaylistTransfer playlist={playlistInfo} tracks={tracksInfo} />
+        <PlaylistTransfer playlist={playlistInfo} backButton={setPlaylistInfo} tracks={tracksInfo} />
       ) : (
         <div>Loading...</div>
       )}

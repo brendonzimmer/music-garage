@@ -1,13 +1,14 @@
-import { GroupedPlaylistData, PlaylistData, TrackData } from "../services/spotifyServices";
-import { MusicNoteIcon, ExternalLinkIcon } from "@heroicons/react/solid";
+import { GroupedPlaylistData, TrackData } from "../services/spotifyServices";
+import { MusicNoteIcon, ExternalLinkIcon, ArrowSmLeftIcon } from "@heroicons/react/solid";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import TrackCompare from "./trackCompare";
-import { useEffect } from "react";
 import { useState } from "react";
 
 const PlaylistDetail: React.FC<{
-  playlist: PlaylistData | GroupedPlaylistData["items"][0];
+  playlist: GroupedPlaylistData["items"][0];
   tracks: TrackData[];
-}> = ({ playlist, tracks }) => {
+  backButton: Dispatch<SetStateAction<GroupedPlaylistData["items"][0]>>;
+}> = ({ playlist, tracks, backButton }) => {
   const [name, setName] = useState(playlist?.name);
   const [desc, setDesc] = useState(playlist?.description);
 
@@ -57,6 +58,23 @@ const PlaylistDetail: React.FC<{
 
         <TrackCompare tracks={tracks} />
       </div>
+
+      {/* Back Button */}
+      <button
+        className="absolute bottom-0 left-0 m-4 px-3 py-2 w-[20%] bg-black/40 text-white/70 font-semibold rounded-[0.75rem] flex justify-center"
+        onClick={() => {
+          backButton(undefined);
+          tracks = undefined;
+        }}
+      >
+        <ArrowSmLeftIcon className="w-6 h-6" />
+      </button>
+      <button
+        className="absolute bottom-0 right-0 m-4 px-3 py-2 w-[70%] bg-black/40 text-white/70 font-semibold rounded-[0.75rem]"
+        onClick={() => {}}
+      >
+        start transfer
+      </button>
     </>
   );
 };
