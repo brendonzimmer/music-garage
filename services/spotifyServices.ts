@@ -95,7 +95,7 @@ export async function getPlaylistTracks(id: string, token: tokenData["access_tok
   };
 
   const { data: results } = await axios.get<PlaylistData["tracks"]>(
-    `https://api.spotify.com/v1/playlists/${id}/tracks?limit=100`,
+    next || `https://api.spotify.com/v1/playlists/${id}/tracks?limit=100`,
     { headers }
   );
 
