@@ -25,13 +25,9 @@ const Track: React.FC<{ track: TrackData }> = ({ track: t }) => {
       ) : (
         <BanIcon className="w-[17.5%] min-w-[60px] text-black opacity-60" />
       )}
-      <div className="text-black text-opacity-60 ml-2 overflow-hidden whitespace-nowrap">
-        <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
-          {t.track.name[40] ? t.track.name.substring(0, 40) + "..." : t.track.name}
-        </div>
-        <div className="text-xs overflow-hidden overflow-ellipsis">
-          {artists(t)[50] ? artists(t).substring(0, 50) + "..." : artists(t)}
-        </div>
+      <div className="text-black text-opacity-60 ml-2">
+        <div className="text-sm font-medium line-clamp-1">{t.track.name}</div>
+        <div className="text-xs line-clamp-1">{artists(t)}</div>
       </div>
     </div>
   );

@@ -63,10 +63,11 @@ const PlaylistDetail: React.FC<{
           </div>
 
           {/* Description */}
-          <div className="text-white text-opacity-75 text-base leading-snug font-medium my-2">{desc}</div>
+          <div className="text-white text-opacity-75 text-base leading-snug font-medium my-2 line-clamp-2">{desc}</div>
         </div>
 
         {/* Display Songs */}
+        {/* Add way to load songs 100 at a time. Click button at bottom to load more. */}
         <div>
           <div className="grid grid-cols-1 gap-2">
             {tracks.map(t => (
