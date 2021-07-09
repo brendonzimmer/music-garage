@@ -26,8 +26,8 @@ const Track: React.FC<{ track: TrackData }> = ({ track: t }) => {
         <BanIcon className="w-[17.5%] min-w-[60px] text-black opacity-60" />
       )}
       <div className="text-black text-opacity-60 ml-2">
-        <div className="text-sm font-medium line-clamp-1">{t.track.name}</div>
-        <div className="text-xs line-clamp-1">{artists(t)}</div>
+        <div className="text-sm font-medium line-clamp-1 lg:text-base">{t.track.name}</div>
+        <div className="text-xs line-clamp-1 lg-text-sm">{artists(t)}</div>
       </div>
     </div>
   );
