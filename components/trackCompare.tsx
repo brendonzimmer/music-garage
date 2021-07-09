@@ -16,6 +16,7 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
   const [viewSearch, setViewSearch] = useState(false);
   const [automatic, setAutomatic] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [neverFound] = useState<number[]>([]);
   const [exile] = useState<number[]>([]);
   const [chosen, setChosen] = useState(0);
   const [track, setTrack] = useState(t[0]);
@@ -25,19 +26,25 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
 
   async function autoMode() {
     await new Promise((resolve, reject) => {
-      searchSong(musicKit, t[index]).then(s => {
-        testSongPair(playlistId, devToken, musicUserToken, s.data[0], t[index]).then(bool => {
-          bool ? exile.push(index) : null;
-          resolve(bool);
+      searchSong(musicKit, t[index])
+        .then(s => {
+          setCompare(s);
+          testSongPair(playlistId, devToken, musicUserToken, s.data[0], t[index]).then(bool => {
+            bool ? exile.push(index) : null;
+            setIndex(prev => prev + 1);
+            resolve(bool);
+          });
+        })
+        .catch(() => {
+          exile.push(index);
+          setIndex(prev => prev + 1);
         });
-      });
     });
-    setIndex(prev => prev + 1);
   }
 
   useEffect(() => {
     async function run() {
-      setCompare(await searchSong(musicKit, track));
+      if (!automatic) setCompare(await searchSong(musicKit, track));
     }
     if (musicKit && track) run() as any;
     if (automatic) autoMode();
@@ -171,6 +178,18 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
                 disabled={automatic}
               >
                 more results
+              </button>
+              <button
+                hidden={!viewSearch}
+                className="px-3 py-2 bg-red-500/60 disabled:opacity-60 rounded-md text-white/70"
+                onClick={() => {
+                  setViewSearch(false);
+                  neverFound.push(index);
+                  console.log("Cannot find index ", neverFound);
+                }}
+                disabled={automatic}
+              >
+                not found
               </button>
             </div>
           </div>
