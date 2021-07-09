@@ -44,7 +44,7 @@ export const useAppleMusic = ({ devToken, automaticAuth }: UseAppleMusicProps) =
         <div className="flex flex-col justify-center space-y-2 ">
           <h1>Please log in to Apple Music to continue.</h1>
           <button
-            className="bg-white/90 px-3 py-2 rounded-md w-[100%] text-black text-opacity-60 font-semibold transition duration-500 ease-in-out"
+            className="bg-white/50 px-3 py-2 rounded-md w-[100%] text-black/60 font-semibold transition duration-500 ease-in-out hover:bg-white/70"
             onClick={authorizeHandler}
           >
             {musicKit?.isAuthorized ? "Done" : "Log in"}

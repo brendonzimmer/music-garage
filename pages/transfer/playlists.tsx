@@ -1,6 +1,5 @@
 import { getPlaylistTracks, GroupedPlaylistData, TrackData, userTokenData } from "../../services/spotifyServices";
 import { TransferContext, TransferProps } from "../../components/context/TransferContext";
-import { useRouterCaution } from "../../components/hooks/useRouterCaution";
 import { useAppleMusic } from "../../components/hooks/useAppleMusic";
 import PlaylistTransfer from "../../components/playlistTransfer";
 import PlaylistCover from "../../components/playlistCover";
@@ -15,7 +14,6 @@ const TransferPlaylists: React.FC<{
   const { Head, UnauthBlocker } = useAppleMusic({ devToken, automaticAuth: true });
   const { setToken, musicUserToken } = useContext<TransferProps>(TransferContext);
   const [tracksInfo, setTracksInfo] = useState<TrackData[]>();
-  useRouterCaution();
 
   useEffect(() => {
     setToken(token);
@@ -39,25 +37,28 @@ const TransferPlaylists: React.FC<{
       {Head}
       {UnauthBlocker}
       {!playlistInfo ? (
-        <div className="m-3">
-          <h1 className="text-3xl text-white font-semibold opacity-60 my-2">
-            Select a playlist to move to Apple Music.
-          </h1>
-          <div className="grid grid-cols-2 gap-2">
-            {allPlaylists.map(p => (
-              <div
-                key={p.id}
-                onClick={() => {
-                  setPlaylistInfo(p);
-                }}
-              >
-                <PlaylistCover key={p.id} playlist={p} />
-              </div>
-            ))}
+        <div className="m-3 grid grid-cols-2 gap-2 xs:grid-cols-3 md:grid-cols-4 md:text-lg xl:grid-cols-5 2xl:grid-cols-6">
+          <div className="p-1.5 bg-black bg-opacity-20 rounded-md shadow-sm hover:bg-opacity-[0.25] duration-100 text-xl font-medium text-white text-opacity-60 list-inside list-decimal">
+            <h1 className="text-xl text-white/60 font-semibold">Select a playlist to move to Apple Music.</h1>
           </div>
+          {allPlaylists.map(p => (
+            <div
+              key={p.id}
+              onClick={() => {
+                setPlaylistInfo(p);
+              }}
+            >
+              <PlaylistCover key={p.id} playlist={p} />
+            </div>
+          ))}
         </div>
       ) : tracksInfo ? (
-        <PlaylistTransfer playlist={playlistInfo} backButton={setPlaylistInfo} tracks={tracksInfo} />
+        <PlaylistTransfer
+          playlist={playlistInfo}
+          backButton={[setPlaylistInfo, setTracksInfo]}
+          tracks={tracksInfo}
+          devToken={devToken}
+        />
       ) : (
         <div>Loading...</div>
       )}
