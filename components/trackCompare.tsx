@@ -44,7 +44,7 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
   }, [track]);
 
   useEffect(() => {
-    if (index >= exile.length) return setEndScreen(true);
+    if (finished && index >= exile.length) return setEndScreen(true);
     if (finished && exile[0]) return setTrack(t[exile[index]]);
     if (index > 0 && index < t.length) setTrack(t[index]);
     if (index >= t.length) {
