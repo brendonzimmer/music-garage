@@ -16,7 +16,7 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
   const [viewSearch, setViewSearch] = useState(false);
   const [automatic, setAutomatic] = useState(false);
   const [finished, setFinished] = useState(false);
-  const [neverFound] = useState<number[]>([]);
+  const [neverFound] = useState<TrackData[]>([]);
   const [exile] = useState<number[]>([]);
   const [chosen, setChosen] = useState(0);
   const [track, setTrack] = useState(t[0]);
@@ -36,7 +36,7 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
           });
         })
         .catch(() => {
-          exile.push(index);
+          neverFound.push(t[index]);
           setIndex(prev => prev + 1);
         });
     });
@@ -44,10 +44,14 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
 
   useEffect(() => {
     async function run() {
-      if (!automatic) setCompare(await searchSong(musicKit, track));
+      if (!automatic) {
+        searchSong(musicKit, track).then(s => {
+          setCompare(s);
+        });
+      }
     }
     if (musicKit && track) run() as any;
-    if (automatic) autoMode();
+    if (automatic) autoMode(); // need to chnage if statements
   }, [track]);
 
   useEffect(() => {
@@ -78,7 +82,7 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
   return (
     <>
       {finished && <h1 className="place-self-start font-medium text-black/70 text-2xl">Unable to find...</h1>}
-      <div className="space-y-2">
+      <div className="space-y-2 md:col-span-3 lg:col-span-6 xl:col-span-7">
         <button
           hidden={finished}
           className="px-3 py-2 bg-white/30 text-black/60 font-medium rounded-md"
@@ -157,6 +161,8 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
                 onClick={() => {
                   setIndex(prev => prev + 1);
                   confirmMatch(playlistId, devToken, musicUserToken, compare.data[chosen]);
+                  setChosen(0);
+                  setViewSearch(false);
                 }}
                 disabled={automatic}
               >
@@ -184,8 +190,11 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
                 className="px-3 py-2 bg-red-500/60 disabled:opacity-60 rounded-md text-white/70"
                 onClick={() => {
                   setViewSearch(false);
-                  neverFound.push(index);
-                  console.log("Cannot find index ", neverFound);
+                  if (finished) neverFound.push(t[exile[index]]);
+                  if (!finished) exile.push(index);
+                  console.log("Cannot find songs ", neverFound);
+                  setChosen(0);
+                  setIndex(prev => prev + 1);
                 }}
                 disabled={automatic}
               >
