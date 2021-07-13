@@ -1,11 +1,24 @@
 import type { PlaylistData, TrackData } from "../../services/spotifyServices";
 import PlaylistDetail from "../../components/playlistDetail";
+import LoadingBar from "react-top-loading-bar";
+import { useEffect, useRef } from "react";
 
 const Playlist: React.FC<{
   playlist: PlaylistData;
   tracks: TrackData[];
 }> = ({ playlist, tracks }) => {
-  return <PlaylistDetail playlist={playlist} tracks={tracks} />;
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (ref.current) ref.current.complete();
+  }, [ref.current]);
+
+  return (
+    <>
+      <LoadingBar loaderSpeed={750} color="#fff" ref={ref} shadow={true} />
+      <PlaylistDetail playlist={playlist} tracks={tracks} />
+    </>
+  );
 };
 
 export default Playlist;
