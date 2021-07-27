@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import fs from "fs";
+// import fs from "fs";
 
 // Generate token for Apple Music
 const private_key = process.env.APPLE_PRIVATE_KEY; // fs.readFileSync("apple_private_key.p8").toString();
