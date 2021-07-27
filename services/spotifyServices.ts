@@ -6,7 +6,7 @@ import { GetServerSidePropsContext } from "next";
 // for services about Transfering
 const clientId = process.env.SPOTIFY_MOVING_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_MOVING_CLIENT_SECRET;
-const redirect_uri = "http://localhost:3000/transfer/playlists";
+const redirect_uri = process.env.REDIRECT;
 
 // Only use on server!
 async function getToken(authCode: userTokenData["access_token"]) {

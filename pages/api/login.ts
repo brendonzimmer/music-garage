@@ -16,7 +16,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
         response_type: "code",
         client_id: process.env.SPOTIFY_MOVING_CLIENT_ID,
         scope: "user-read-private user-read-email user-library-read playlist-read-private playlist-read-collaborative",
-        redirect_uri: process.env.SITE,
+        redirect_uri: process.env.REDIRECT,
       })
   );
 };
