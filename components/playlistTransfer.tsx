@@ -73,9 +73,14 @@ const PlaylistTransfer: React.FC<{
   return !endScreen ? (
     <>
       {/* Display Playlist */}
-      <div className="m-3 grid place-items-center lg:grid-cols-5 lg:gap-3 xl:grid-cols-9">
+      <div className="m-3 grid place-items-center grid-cols-1 lg:grid-cols-5 lg:gap-3 xl:grid-cols-9">
         {/* Title & Image */}
-        <div className="xs:max-w-[calc(30rem-1.5rem)] md:max-w-[calc(38rem-1.5rem)] lg:max-w-full lg:sticky lg:top-3 lg:col-span-2 lg:place-self-start xl:col-span-3 2xl:col-span-2">
+        <div
+          className={
+            "xs:max-w-[calc(30rem-1.5rem)] md:max-w-[calc(38rem-1.5rem)] lg:max-w-full lg:sticky lg:top-3 lg:col-span-2 lg:place-self-start " +
+            (transferStarted && playlistId ? "xl:col-span-4 3xl:col-span-3" : "xl:col-span-3 2xl:col-span-2")
+          }
+        >
           <div className="p-2 bg-white bg-opacity-20 rounded-md shadow-sm">
             <div className="grid grid-cols-6 items-start text-[1.75rem] leading-none font-semibold text-black/40 space-x-2">
               <img
@@ -91,7 +96,7 @@ const PlaylistTransfer: React.FC<{
           </div>
 
           {/* Back Button 1 */}
-          <div className="hidden lg:grid gap-2 grid-cols-5 justify-center mt-2 w-full text-white/80 font-semibold xs:max-w-[calc(30rem-1.5rem)] md:max-w-[calc(38rem-1.5rem)] lg:max-w-full">
+          <div className="hidden lg:grid gap-2 grid-cols-5 justify-center mt-2 w-full text-white/80 font-semibold">
             <button
               className="px-3 py-2 col-span-4 bg-black/50 rounded-md"
               onClick={() => setTransferStarted(prev => !prev)}
@@ -116,26 +121,26 @@ const PlaylistTransfer: React.FC<{
           <div className="text-white/70 text-[0.90rem] leading-[1.1rem] pb-0.5 font-medium my-1 line-clamp-1 md:line-clamp-2 lg:line-clamp-none lg:pr-1">
             {desc}
           </div>
-        </div>
 
-        {/* Back Button 2 */}
-        <div className="sticky grid gap-2 grid-cols-10 justify-center top-3 mb-2 w-full text-white/80 font-semibold xs:max-w-[calc(30rem-1.5rem)] md:max-w-[calc(38rem-1.5rem)] lg:hidden">
-          <button
-            className="col-span-3 px-3 py-2 bg-black/50 rounded-md flex justify-center disabled:opacity-60 duration-300 ease-in-out"
-            disabled={transferStarted}
-            onClick={() => {
-              backButton[0](undefined);
-              backButton[1](undefined);
-            }}
-          >
-            <ArrowSmLeftIcon className="w-6 h-6" />
-          </button>
-          <button
-            className="px-3 py-2 col-span-7 bg-black/50 rounded-md"
-            onClick={() => setTransferStarted(prev => !prev)}
-          >
-            {transferStarted ? "stop transfer" : "start transfer"}
-          </button>
+          {/* Back Button 2 */}
+          <div className="sticky grid gap-2 grid-cols-10 justify-center top-3 mb-2 w-full text-white/80 font-semibold lg:hidden">
+            <button
+              className="col-span-3 px-3 py-2 bg-black/50 rounded-md flex justify-center disabled:opacity-60 duration-300 ease-in-out"
+              disabled={transferStarted}
+              onClick={() => {
+                backButton[0](undefined);
+                backButton[1](undefined);
+              }}
+            >
+              <ArrowSmLeftIcon className="w-6 h-6" />
+            </button>
+            <button
+              className="px-3 py-2 col-span-7 bg-black/50 rounded-md"
+              onClick={() => setTransferStarted(prev => !prev)}
+            >
+              {transferStarted ? "stop transfer" : "start transfer"}
+            </button>
+          </div>
         </div>
 
         {transferStarted && playlistId ? (

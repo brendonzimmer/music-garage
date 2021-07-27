@@ -14,6 +14,8 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
   const { musicKit, musicUserToken } = useContext<TransferProps>(TransferContext);
   const [compare, setCompare] = useState<songSearchResponse>();
   const [viewSearch, setViewSearch] = useState(false);
+  const [searchOffset, setSearchOffset] = useState(5);
+  const [moreResults, setMoreResults] = useState(true);
   const [automatic, setAutomatic] = useState(false);
   const [finished, setFinished] = useState(false);
   const [neverFound] = useState<TrackData[]>([]);
@@ -81,14 +83,14 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
 
   return (
     <>
-      {finished && <h1 className="place-self-start font-medium text-black/70 text-2xl">Unable to find...</h1>}
-      <div className="space-y-2 md:col-span-3 lg:col-span-6 xl:col-span-7">
+      <div className="space-y-2 lg:col-span-3 xl:col-span-5 3xl:col-span-6 xs:max-w-[calc(30rem-1.5rem)] md:max-w-[calc(38rem-1.5rem)] lg:max-w-full lg:min-w-full">
+        {finished && <h1 className="place-self-start font-medium text-black/70 text-2xl">Unable to find...</h1>}
         <button
           hidden={finished}
-          className="px-3 py-2 bg-white/30 text-black/60 font-medium rounded-md"
+          className="px-3 py-2 bg-black/50 text-white/75 font-medium rounded-md w-full"
           onClick={() => setAutomatic(prev => !prev)}
         >
-          Automatic Mode{automatic ? ": On" : ": Off"}
+          click to{automatic ? " pause automatic mode" : " run automatically"}
         </button>
         <div className="bg-white/20 rounded-md shadow-sm px-2 pb-2">
           <h1 className="font-medium text-black/60 text-xl py-1">Spotify</h1>
@@ -98,7 +100,10 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
           <div className="bg-white/20 rounded-md shadow-sm px-2 pb-2">
             <h1 className="font-medium text-black/60 text-xl py-1">Apple Music</h1>
             <div
-              className="flex bg-white bg-opacity-20 rounded-md items-center shadow"
+              className={
+                "flex bg-white bg-opacity-20 rounded-md items-center shadow" +
+                (viewSearch ? " cursor-pointer hover:bg-black/10 duration-100" : "")
+              }
               onClick={() => setViewSearch(false)}
             >
               {compare.data[chosen].attributes.artwork.url ? (
@@ -120,7 +125,7 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
               </div>
             </div>
 
-            <div className={"space-y-1.5 mt-1.5" + (viewSearch ? "" : " hidden")}>
+            <div className={"space-y-1.5 mt-1.5" + (viewSearch ? " cursor-pointer" : " hidden")}>
               {compare.data.map((s, index) =>
                 index !== chosen ? (
                   <div
@@ -129,7 +134,7 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
                       setChosen(index);
                       setViewSearch(false);
                     }}
-                    className="flex bg-white bg-opacity-20 rounded-md items-center shadow"
+                    className="flex bg-white bg-opacity-20 rounded-md items-center shadow hover:bg-black/10 duration-100"
                   >
                     {s.attributes.artwork.url ? (
                       <img
@@ -155,16 +160,17 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
               )}
             </div>
 
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className={"mt-2 grid gap-2" + (viewSearch ? " lg:grid-cols-3" : " lg:grid-cols-2")}>
               <button
                 className="px-3 py-2 bg-green-600/60 disabled:opacity-60 rounded-md text-white/70"
                 onClick={() => {
                   setIndex(prev => prev + 1);
                   confirmMatch(playlistId, devToken, musicUserToken, compare.data[chosen]);
                   setChosen(0);
+                  setSearchOffset(5);
                   setViewSearch(false);
                 }}
-                disabled={automatic}
+                disabled={automatic || viewSearch}
               >
                 correct
               </button>
@@ -173,15 +179,20 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
                 onClick={() => {
                   async function run() {
                     if (viewSearch) {
-                      const res = await searchSong(musicKit, track, 5);
+                      const res = await searchSong(musicKit, track, searchOffset);
+                      if (res?.data.length < 5 || !res) setMoreResults(false);
 
-                      setCompare(prev => (res ? res : prev));
+                      setSearchOffset(searchOffset + 5);
+                      setCompare(prev => {
+                        if (res) prev.data.push(...res.data);
+                        return prev;
+                      });
                     }
                     setViewSearch(true);
                   }
                   run();
                 }}
-                disabled={automatic}
+                disabled={automatic || !moreResults || (compare.data.length < 5 && viewSearch)}
               >
                 more results
               </button>

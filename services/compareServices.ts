@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Search for song
 export async function searchSong(musicKit: MusicKit.MusicKitInstance, track: TrackData, offset?: number) {
-  const res = (await musicKit.api.search(track.track.name + " " + track.track.artists[0].name, {
+  const res = (await musicKit.api.search(track.track.artists[0].name + " " + track.track.name, {
     types: "songs",
     offset,
   })) as any;
