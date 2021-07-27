@@ -27,7 +27,7 @@ const Track: React.FC<{ track: TrackData }> = ({ track: t }) => {
       )}
       <div className="text-black text-opacity-60 ml-2">
         <div className="text-sm font-medium line-clamp-1 lg:text-base">{t.track.name}</div>
-        <div className="text-xs line-clamp-1 lg-text-sm">{artists(t)}</div>
+        <div className="text-xs line-clamp-1 lg:text-sm">{artists(t)}</div>
       </div>
     </div>
   );

@@ -120,8 +120,10 @@ const TrackCompare: React.FC<{ tracks: TrackData[]; devToken: string; playlistId
                 <></> // <BanIcon className="w-[17.5%] min-w-[60px] text-black opacity-60" />
               )}
               <div className="text-black text-opacity-60 ml-2">
-                <div className="text-sm font-medium line-clamp-1">{compare.data[chosen].attributes.name}</div>
-                <div className="text-xs line-clamp-1">{compare.data[chosen].attributes.artistName}</div>
+                <div className="text-sm font-medium line-clamp-1 lg:text-base">
+                  {compare.data[chosen].attributes.name}
+                </div>
+                <div className="text-xs line-clamp-1 lg:text-sm">{compare.data[chosen].attributes.artistName}</div>
               </div>
             </div>
 
